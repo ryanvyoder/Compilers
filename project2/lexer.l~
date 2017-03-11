@@ -87,7 +87,7 @@ divide			"/"
 {greatt}		{yycolumn++; return(GTnum);}
 {integerConst}	{
 					yycolumn+=yyleng;
-					yylval.intg = atoi(yytext);
+					yylval = atoi(yytext);
 					return(ICONSTnum);
 				}
 {id}		    {
