@@ -3,15 +3,23 @@
 #include <stdio.h>
 %}
 %token <intg> PROGRAMnum IDnum .... SCONSTnum
-%type <tptr> Program ClassDecl ..... Variable
+%type <tptr> Program ClassDecl ProgramB Variable
 %% /* yacc specification */
-Program : PROGRAMnum IDnum SEMInum ClassDecl
-{ $$ = MakeTree(ProgramOp, $4, MakeLeaf(IDNode, $2)); printtree($$, 0); }
-;
+
+/* Program */
+Program : PROGRAMnum IDnum SEMInum ProgramB
+{ $$ = MakeTree(ProgramOp, $4, MakeLeaf(IDNode, $2)); printtree($$, 0); };
+ProgramB : ClassDecl
+{ $$ = MakeTree(ClassOp, MakeLeaf(DUMMYNode, 0), $1);} | 
+ProgramB ClassDecl
+{ $$ = MakeTree(ClassOp, $1, $2); };
+ /* Class */
+ClassDecl : CLASSnum IDnum ClassBody
+{ $$ = MakeTree(ClassDefOp, $3, MakeLeaf(IDNode, $2);};
+
+
 /* other rules */
-Expression : SimpleExpression {$$ = $1;}
- | SimpleExpression Comp_op SimpleExpression
- { MkLeftC($1, $2); $$ = MkRightC($3, $2); }
+
 %%
 int yycolumn, yyline;
 FILE *treelst;
