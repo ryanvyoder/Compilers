@@ -139,6 +139,7 @@ divide			"/"
 {ws}			{yycolumn+=yyleng;}
 {newline}       {yyline++; yycolumn=0;}
 {backslash}		{return(BACKSLASHnum);}
+{variable}        {yylval.intg = index;}
 
 %%
 /* user subroutines */
