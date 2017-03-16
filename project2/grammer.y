@@ -8,7 +8,7 @@
 %% /* yacc specification */
 /*Statement List rule*/
 StatementList: LBRACEnum Statementsop RBRACEnum {$$ = $2;};
-Statementsop: Statement {$$ = MakeTree(StmtOp,MakeLeaf(DUMMYNode,0), $1);} | Statement SEMInum Statement {$$ = MakeTree(StmtOp,$1,$2);};
+Statementsop: Statement {$$ = MakeTree(StmtOp,MakeLeaf(DUMMYNode,0), $1);} | Statementsop SEMInum Statement {$$ = MakeTree(StmtOp,$1,$2);};
 /*Statement*/
 Statement : AssignmentStatement {$$ = $1;} | Statements_Op {$$ = $1;};
 Statements_Op : MethodCallStatement {$$ = $1;} | Statements_Op2 {$$ = $1;};
@@ -19,18 +19,18 @@ Statements_Op4: WhileStatement {$$ = $1} | epsilon {$$ = MakeLeaf(DUMMYNode,0);}
 AssignmentStatement: Variable ASSGNnum Expression {$$ = MakeTree(AssignOp,MakeTree(AssignOp,MakeLeaf(DUMMYNode,0),$1),$3);};
 /*MethodCallStatement*/
 MethodCallStatement: Variable LPARENnum RPARENnum {$$ = MakeTree(RoutineCallOp,$1,MakeLeaf(DUMMYNode,0)); } | Variable LPARENnum Expre RPARENnum {$$ = MakeTree(RoutineCallOp,$1,$3); };
-Expre: Expression {$$ = MakeTree(CommaOp, $1,MakeLeaf(DUMMYNode,0) );}| Expression COMMAnum Expression {$$ = MakeTree(CommaOp,$1,$2);}; 
+Expre: Expression {$$ = MakeTree(CommaOp, $1,MakeLeaf(DUMMYNode,0) );}| Expre COMMAnum Expression {$$ = MakeTree(CommaOp,$2,$1);}; 
 /*Return rule*/
 ReturnStatement: RETURNnum {$$ = MakeTree(ReturnOp, NULL, NULL);  } | RETURNnum Expression {$$=MakeTree(ReturnOp, $2,MakeLeaf(DUMMYNode,0) ) };
 /*If rule*/
-IfStatement : IFnum Expression StatementList {$$=MakeTree(IfElseOp,$2,$3);} | IFnum Expression StatementList IFState_Op {$$ = MakeTree(IfElseOp,$2, MakeTree(IfElseOp,$4, $3));};
+IfStatement : IFnum Expression StatementList {$$=MakeTree(IfElseOp,$2,$3);} | IFnum Expression StatementList IFState_Op {$$ = MakeTree(IfElseOp, MakeTree(IfElseOp,$4, $3),$2);};
 IFState_Op : ELSEnum IfStatement {$$ = MakeTree(IfElseOp,MakeLeaf(DUMMYNode,0),$2);} | ELSEnum StatementList {$$ = MakeTree(IfElseOp,MakeLeaf(DUMMYNode,0),$2);};
 /*While rule*/
 WhileStatement : WHILEnum Expression StatementList {$$= MakeTree(LoopOp,$2, $1 );};
 /* Expression rule */
 Expression : SimpleExpression {$$ = $1;}
  | SimpleExpression Comp_op SimpleExpression
- { $$=MakeTree($1,$2,$3); };
+ { $$=MakeTree($2,$1,$3); };
 Comp_op : LTnum {$$ = LTOp;} | Comp_op2 {$$ = $1;};
 Comp_op2 : GTnum {$$ = GTOp;} | Comp_op3 {$$ = $1;};
 Comp_op3 : EQnum {$$ = EQOp;} | Comp_op4 {$$ = $1;};
