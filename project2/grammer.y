@@ -58,7 +58,6 @@ Factor_op2: UnsignedConstant {$$=$1;} | Factor_op5 {$$=$1;};
 Factor_op5: Variable {$$=$1;} | Factor_op6 {$$=$1;};
 Factor_op6: MethodCallStatement {$$=$1;} | Factor_op7 {$$=$1;};
 Factor_op7: Expression {$$=$1;} | Factor {$$=$1;};
-
 /*UnsignedConstant rules*/
 UnsignedConstant : ICONSTnum {$$= MakeLeaf(NUMNode, yyval);} | SCONSTnum {$$ = MakeLeaf(STRINGNode, yyval);}; 
 /*Variable rule*/
