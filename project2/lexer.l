@@ -94,11 +94,11 @@ divide			"/"
 					int result = STMatch(yytext);
 					if(result == -1){
 						yycolumn+=yyleng; 
-						yylval = STadd(yytext, yyleng);
+						yylval.intg = STadd(yytext, yyleng);
 						return (IDnum);
 					}
 					else{
-						yylval = result;
+						yylval.intg = result;
 						return (IDnum);
 					}
 				}
@@ -126,11 +126,11 @@ divide			"/"
 						yycolumn+=yyleng; 
 						char* text = calloc(yyleng, sizeof(char));
 						escapeChar(text, yytext, yyleng);
-						yylval = STadd(text, yyleng);
+						yylval.intg = STadd(text, yyleng);
 						return(SCONSTnum);
 					}
 					else{
-						yylval = result;
+						yylval.intg = result;
 						return (SCONSTnum);
 					}
 				}
@@ -139,7 +139,6 @@ divide			"/"
 {ws}			{yycolumn+=yyleng;}
 {newline}       {yyline++; yycolumn=0;}
 {backslash}		{return(BACKSLASHnum);}
-{variable}        {yylval.intg = index;}
 
 %%
 /* user subroutines */
