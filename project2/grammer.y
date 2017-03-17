@@ -4,8 +4,130 @@
 %}
 %start Program
 %token <intg> ANDnum ASSGNnum DECLARATIONSnum DOTnum ENDDECLARATIONSnum EQUALnum GTnum IDnum INTnum LBRACnum LPARENnum METHODnum NEnum ORnum PROGRAMnum RBRACnum RPARENnum SEMInum VALnum WHILEnum CLASSnum COMMAnum DIVIDEnum ELSEnum EQnum GEnum ICONSTnum IFnum LBRACEnum LEnum LTnum MINUSnum NOTnum PLUSnum RBRACEnum RETURNnum SCONSTnum TIMESnum VOIDnum ERRORnum STRERRORnum COMMERRORnum IDERRORnum BACKSLASHnum EOFnum			
-%type <tptr> Program ClassDecl Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3 Comp_op Comp_op2 Comp_op3 Comp_op4 Comp_op5 ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 Simple_op3 Simple_op4 Simple_op5 Simple_op6 Simple_op7 Simple_op8 Simple_op9 UnsignedConstant Term Term_op2 Term_op3 Term_op4 Term_op Term_op6 Term_op7 Term_op8  Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op
+%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3 Comp_op Comp_op2 Comp_op3 Comp_op4 Comp_op5 ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 Simple_op3 Simple_op4 Simple_op5 Simple_op6 Simple_op7 Simple_op8 Simple_op9 UnsignedConstant Term Term_op2 Term_op3 Term_op4 Term_op Term_op6 Term_op7 Term_op8  Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op Program ProgramB ClassDecl ClassBody ClassBodyB Decls DeclsB FieldDecl FieldDeclB VariableDeclId VariableDeclIdB VariableInitializer ArrayCreationExpression ArrayCreationExpressionB GlobalType
 %% /* yacc specification */
+// First Half of Grammar //
+
+/* To Do List 
+ - Verify left-recursive
+ - Fix Type storage using a global variable
+ */
+ 
+
+/* GlobalType = Make:e
+
+/* Program */
+Program: 
+	PROGRAMnum IDnum SEMInum ProgramB {$$ = MakeTree(ProgramOp, $4, MakeLeaf(IDNode, $2));};
+ProgramB:
+	ClassDecl {$$ = MakeTree(ClassOp, MakeLeaf(DUMMYNode, 0), $1);} |
+	ClassDecl ProgramB {$$ = MakeTree(ClassOp, $2, $1);};
+
+/* Class Declarations */
+ClassDecl:
+	CLASSnum IDnum ClassBody {$$ = MakeTree(ClassDefOp, $3, MakeLeaf(IDNode, $2);};
+	
+/* ClassBody */
+ClassBody:
+	LBRACEnum ClassBodyB RBRACEnum {$$ = $3;} |
+	LBRACEnum RBRACEnum {$$ = MakeLeaf(DUMMYNode, 0);};
+ClassBodyB:
+	Decls MethodDecl {$$ = MakeTree(BodyOp, $1, $2);} |
+	Decls {$$ = $1;} |
+	ClassBodyB MethodDecl {$$ = MakeTree(BodyOp, $1, $2);};
+	
+/* Declarations */
+Decls:
+	DECLARATIONSnum ENDDECLARATIONSnum {$$ = MakeLeaf(DUMMYNode, 0);} |
+	DECLARATIONSnum DeclsB ENDDECLARATIONSnum {$$ = $2};
+DeclsB:
+	FieldDecl {$$ = MakeTree(BodyOp, MakeLeaf(DUMMYNode, 0), $1);} |
+	DeclsB FieldDecl {$$ = MakeTree(BodyOp, $1, $2);};
+
+	
+/* Field Declarations */
+//Needs fixing (store variable type)
+FieldDecl:
+	Type FieldDeclB {$$ = $1; };
+FieldDeclB:
+	VariableDeclId COMMAnum FieldDeclB {$$ = MakeTree(DeclOp, $3, MakeTree(CommaOp, $1, MakeTree(CommaOp, TYPEEE, MakeLeaf(DUMMYNode, 0))));} |
+	VariableDeclId EQUALnum VariableInitializer COMMAnum FieldDeclB {} |
+	VariableDeclId EQUALnum VariableInitializer SEMInum {} |
+	VariableDeclId SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, TYPEEE, MakeLeaf(DUMMYNode, 0))));};
+	
+
+/* Variable Declaration ID */
+VariableDeclId:
+	IDnum VariableDeclIdB {$$ = $1;} |
+	IDnum {$$ = $1;};
+VariableDeclIdB:
+	LBRACnum RBRACnum {} |
+	VariableDeclIdB LBRACnum RBRACnum {};
+	
+	
+/* VariableInitializer */
+VariableInitializer:
+	Expression {$$ = $1;} |
+	ArrayInitializer {$$ = $1;} |
+	ArrayCreationExpression {$$ = $1;};
+	
+
+/* ArrayInitializer */
+ArrayInitializer:
+	LBRACEnum VariableInitializer RBRACEnum {$$ = MakeTree(ArrayTypeOp, MakeTree(CommaOp, MakeLeaf(DUMMYNode, 0), $2), TYPEE);} |
+	LBRACEnum VariableInitializer ArrayInitializerB RBRACEnum {$$ = MakeTree(ArrayTypeOp, $3, TYPEEE);};
+ArrayInitializerB:
+	COMMAnum VariableInitializer {$$ = MakeTree(CommaOp, MakeLeaf(DUMMYNode, 0), $2);} |
+	ArrayInitializerB COMMAnum VariableInitializer {$$ = MakeTree(CommaOp, $1, $3);};
+	
+	
+/* ArrayCreationExpression */
+ArrayCreationExpression:
+	INTnum ArrayCreationExpressionB {$$ = MakeTree(ArrayTypeOp, $2, $1);};
+ArrayCreationExpressionB:
+	LBRACnum Expression RBRACnum {$$ = MakeTree(BoundOp, MakeLeaf(DUMMYNode, 0), $2);} |
+	ArrayCreationExpressionB LBRACnum Expression RBRACnum {$$ = MakeTree(BoundOp, $1, $3);};
+
+	
+/* !!!!!!!!!!!! Method Declaration */
+MethodDecl:
+	METHODnum MethodDeclB IDnum LPARENnum RPARENnum Block {} |
+	METHODnum MethodDeclB IDnum LPARENnum FormalParameterList RPARENnum Block {};
+MethodDeclB:
+	Type {GlobalType = $1;}|
+	VOIDnum {};
+
+	
+/* FormalParameterList */
+FormalParameterList:
+	VALnum INTnum IDnum {} |
+	VALnum INTnum IDnum FormalParameterListB {} |
+	INTnum IDnum {} |
+	INTnum IDnum FormalParameterListB {};
+FormalParameterListB:
+	COMMAnum IDnum {} |
+	FormalParameterListB COMMAnum IDnum {} |
+	SEMInum FormalParameterList {};
+
+/* Block */
+Block:
+	Decls StatementList {} |
+	StatementList {};
+
+/* Type */
+Type:
+	TypeB TypeC {} |
+	TypeB {};
+TypeB:
+	IDnum {} |
+	INTnum {};
+TypeC:
+	LBRACnum RBRACnum {} |
+	TypeC LBRACnum RBRACnum {} |
+	
+
+// Second Half of Grammar //
+
 /*Statement List rule*/
 StatementList: LBRACEnum Statementsop RBRACEnum {$$ = $2;};
 Statementsop: Statement {$$ = MakeTree(StmtOp,MakeLeaf(DUMMYNode,0), $1);} | Statementsop SEMInum Statement {$$ = MakeTree(StmtOp,$1,$2);};
