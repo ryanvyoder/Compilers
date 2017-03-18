@@ -332,16 +332,51 @@ void zerocrosses ()
     crosses [i] = 0;
 }
 
-extern char  strg_tbl[];
+extern char  p[];
 
 char* getname(int i)/*return ID name or String, i is the index of the string table, passed through yylval*/
 {
-  return( strg_tbl+i );/*return string table indexed at i*/
+	char * name;
+	char * start;
+	char * end;
+	
+	start = p+i;
+	end = (strchr((p+i), ' ')) - 1;
+	
+	//the current word we're looking at is the length of the end of the string - the start position
+	name = calloc((end-start), sizeof(char));
+	//Moving the string from the string table into our currentSearch string
+	int j;
+	for(j = 0; j < (end - start); j++){
+		*(name+j) = *(p+i+j);
+	}
+	
+	return( name );/*return string table indexed at i*/
 }
 
 char* getstring(int i)
 {
-  return( strg_tbl+i );/*return string table indexed at i*/
+	char * name;
+	char * start;
+	char * end;
+	
+	end = strchr((start+1), '\'');
+	// right here we are being sure to not stop constructing the comparison string if the string contains a single quote escape character
+	char * temp = end;
+	while(*(temp-1) == '\\'){
+		temp = strchr((temp+1), '\'');
+		end = temp;
+	}
+	
+	//the current word we're looking at is the length of the end of the string - the start position
+	name = calloc((end-start), sizeof(char));
+	//Moving the string from the string table into our currentSearch string
+	int j;
+	for(j = 0; j < (end - start); j++){
+		*(name+j) = *(p+i+j);
+	}
+	
+	return( name );/*return string table indexed at i*/
 }
 
 
