@@ -15,7 +15,7 @@ Aggelos Varvitsiotis.
 /*	define syntax tree node and pointer type	*/
 #include <stdio.h>
 #include "proj2.h"
-
+#include "lex.yy.c"
 ILTree dummy = { DUMMYNode, 0, 0, 0, 0 };
  
 
@@ -332,7 +332,7 @@ void zerocrosses ()
     crosses [i] = 0;
 }
 
-extern char  strg_tbl[];
+extern char  strg_tbl[] = getStringTable();
 
 char* getname(int i)/*return ID name or String, i is the index of the string table, passed through yylval*/
 {

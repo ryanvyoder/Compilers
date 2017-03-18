@@ -141,14 +141,14 @@ Statements_Op4: WhileStatement {$$ = $1} | epsilon {$$ = MakeLeaf(DUMMYNode,0);}
 AssignmentStatement: Variable ASSGNnum Expression {$$ = MakeTree(AssignOp,MakeTree(AssignOp,MakeLeaf(DUMMYNode,0),$1),$3);};
 /*MethodCallStatement*/
 MethodCallStatement: Variable LPARENnum RPARENnum {$$ = MakeTree(RoutineCallOp,$1,MakeLeaf(DUMMYNode,0)); } | Variable LPARENnum Expre RPARENnum {$$ = MakeTree(RoutineCallOp,$1,$3); };
-Expre: Expression {$$ = MakeTree(CommaOp, $1,MakeLeaf(DUMMYNode,0) );}| Expre COMMAnum Expression {$$ = MakeTree(CommaOp,$2,$1);}; 
+Expre: Expression {$$ = MakeTree(CommaOp, $1,MakeLeaf(DUMMYNode,0) );}| Expre COMMAnum Expression {$$ = MakeTree(CommaOp,$3,$1);}; 
 /*Return rule*/
-ReturnStatement: RETURNnum {$$ = MakeTree(ReturnOp,MakeLeaf(DUMMYNode,0)  , MakeLeaf(DUMMYNode,0) );  } | RETURNnum Expression {$$=MakeTree(ReturnOp, $2,MakeLeaf(DUMMYNode,0) ) };
+ReturnStatement: RETURNnum {$$ = MakeTree(ReturnOp,MakeLeaf(DUMMYNode,0), MakeLeaf(DUMMYNode,0) );  } | RETURNnum Expression {$$=MakeTree(ReturnOp, $2,MakeLeaf(DUMMYNode,0) ) };
 /*If rule*/
 IfStatement : IFState_Op {$$= $1;}| IFState_Op ELSEnum StatementList {$$ = MakeTree(IfElseOp, $1,$3);};
 IFState_Op : IFnum Expression StatementList {$$= MakeTree(IfElseOp,MakeLeaf(DUMMYNode,0) ,MakeTree(CommaOp, $2, $3));} | IFState_Op ELSEnum IFnum Expression StatementList {$$=MakeTree(IfElseOp, $1, MakeTree(CommaOp,$3,$4));}
 /*While rule*/
-WhileStatement : WHILEnum Expression StatementList {$$= MakeTree(LoopOp,$2, $1 );};
+WhileStatement : WHILEnum Expression StatementList {$$= MakeTree(LoopOp,$2, $3 );};
 /* Expression rule */
 Expression : SimpleExpression {$$ = $1;}
  | SimpleExpression Comp_op SimpleExpression
@@ -166,9 +166,9 @@ Simple_op3 :  PLUSnum Term Simple_op {$$ = MakeTree(AddOp, $3,$2); } | epsilon {
 Simple_op4 :  MINUSnum Term Simple_op {$$ = MakeTree(UnaryNegOp, $3,$2); } | epsilon {$$ = MakeLeaf(DUMMYNode,0);};
 Simple_op5 :  ORnum Term Simple_op {$$ = MakeTree(OrOp, $3,$2); } | epsilon {$$ = MakeLeaf(DUMMYNode,0);};
 Simple_op6 : Simple_op7 {$$= $1;} | Simple_op8 {$$=$1;} | Simple_op9 {$$=$1;};
-Simple_op7 :  Term PLUSnum Term Simple_op6 {$$ = MakeTree(AddOp, MakeTree(AddOp,$4,$3),$1); } | Term {$$ = $1};
-Simple_op8 :  Term MINUSnum Term Simple_op6 {$$ = MakeTree(UnaryNegOp, MakeTree(UnaryNegOp,$4,$3),$1); } | Term {$$ = $1};
-Simple_op9 :  Term ORnum Term Simple_op6 {$$ = MakeTree(OrOp, MakeTree(OrOp,$4,$3),$1); } | Term {$$ = $1};
+Simple_op7 :  Term PLUSnum Term Simple_op {$$ = MakeTree(AddOp, MakeTree(AddOp,$4,$3),$1); } | Term {$$ = $1};
+Simple_op8 :  Term MINUSnum Term Simple_op {$$ = MakeTree(UnaryNegOp, MakeTree(UnaryNegOp,$4,$3),$1); } | Term {$$ = $1};
+Simple_op9 :  Term ORnum Term Simple_op {$$ = MakeTree(OrOp, MakeTree(OrOp,$4,$3),$1); } | Term {$$ = $1};
 /*Term rules*/
 Term : Term_op {$$=$1;};
 Term_op: Term_op2 {$$= $1;} | Term_op3 {$$= $1;} | Term_op4 {$$= $1;} | Factor {$$= $1;};
@@ -188,7 +188,7 @@ UnsignedConstant : ICONSTnum {$$= MakeLeaf(NUMNode, $1);} | SCONSTnum {$$ = Make
 Variable : IDnum Variable_op {$$ = MakeTree(VarOp, MakeLeaf(IDNode, $1), $2);};
 Variable_op: Variable_op2 {$$=$1;} | epsilon {$$ = MakeLeaf(DUMMYNode,0);};
 Variable_op2 : LBRACnum Variable_op3 RBRACnum Variable_op {$$=MakeTree(SelectOp, $2, $4);} | DOTnum IDnum Variable_op {$$= MakeTree(SelectOp,MakeTree(FieldOp,MakeLeaf(IDNode, $2),MakeLeaf(DUMMYNode,0)), $3);};
-Variable_op3 : Expression {$$ = MakeTree(IndexOp, $1,MakeLeaf(DUMMYNode,0); )} | Expression COMMAnum Expression {$$ = MakeTree(IndexOp, MakeTree(CommaOp, $1, $3),MakeLeaf(DUMMYNode,0);} ;
+Variable_op3 : Expression {$$ = MakeTree(IndexOp, $1,MakeLeaf(DUMMYNode,0); )} | Expression COMMAnum Expression {$$ = MakeTree(IndexOp,$1 ,MakeTree(IndexOp, $3,MakeLeaf(DUMMYNode,0)));} ;
 epsilon : ;
 %%
 int yycolumn, yyline;
