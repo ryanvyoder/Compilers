@@ -4,7 +4,8 @@
 %}
 %start Program
 %token <intg> ANDnum ASSGNnum DECLARATIONSnum DOTnum ENDDECLARATIONSnum EQUALnum GTnum IDnum INTnum LBRACnum LPARENnum METHODnum NEnum ORnum PROGRAMnum RBRACnum RPARENnum SEMInum VALnum WHILEnum CLASSnum COMMAnum DIVIDEnum ELSEnum EQnum GEnum ICONSTnum IFnum LBRACEnum LEnum LTnum MINUSnum NOTnum PLUSnum RBRACEnum RETURNnum SCONSTnum TIMESnum VOIDnum ERRORnum STRERRORnum COMMERRORnum IDERRORnum BACKSLASHnum EOFnum			
-%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3 Comp_op Comp_op2 Comp_op3 Comp_op4 Comp_op5 ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 Simple_op3 Simple_op4 Simple_op5 Simple_op6 Simple_op7 Simple_op8 Simple_op9 UnsignedConstant Term Term_op2 Term_op3 Term_op4 Term_op Term_op6 Term_op7 Term_op8  Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op Program ProgramB ClassDecl ClassBody ClassBodyB Decls DeclsB FieldDecl FieldDeclB VariableDeclId VariableDeclIdB VariableInitializer ArrayCreationExpression ArrayCreationExpressionB GlobalType ReturnType
+%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3 Comp_op Comp_op2 Comp_op3 Comp_op4 Comp_op5 ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 Simple_op3 Simple_op4 Simple_op5 Simple_op6 Simple_op7 Simple_op8 Simple_op9 UnsignedConstant Term Term_op2 Term_op3 Term_op4 Term_op Term_op6 Term_op7 Term_op8  Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op
+Program ProgramB ClassDecl ClassBody ClassBodyB Decls DeclsB FieldDecl FieldDeclB VariableDeclId VariableDeclIdB VariableInitializer ArrayCreationExpression ArrayCreationExpressionB MethodDecl  Block GlobalType ReturnType Temp
 %% /* yacc specification */
 // First Half of Grammar //
 
@@ -46,14 +47,18 @@ DeclsB:
 
 	
 /* Field Declarations */
-//Needs fixing (store variable type)
+//Needs fixing (Should be left-recursive but isn't)
 FieldDecl:
-	Type FieldDeclB {$$ = $1; };
+	Type FieldDeclB {$$ = $2; GlobalType = $1;};
 FieldDeclB:
-	VariableDeclId COMMAnum FieldDeclB {$$ = MakeTree(DeclOp, $3, MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));} |
-	VariableDeclId EQUALnum VariableInitializer COMMAnum FieldDeclB {} |
-	VariableDeclId EQUALnum VariableInitializer SEMInum {} |
-	VariableDeclId SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));};
+	VariableDeclId SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));} |
+	VariableDeclId FieldDeclD SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, $2)));} |
+	VariableDeclId FieldDeclD FieldDeclE {$$ = MakeTree(DeclOp, $3, MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, $2)));};
+FieldDeclD:
+	EQUALnum VariableInitializer{$$ = $2;};
+FieldDeclE:
+	COMMAnum FieldDeclB {$$ = $2;};
+	
 	
 
 /* Variable Declaration ID */
@@ -83,7 +88,7 @@ ArrayInitializerB:
 	
 /* ArrayCreationExpression */
 ArrayCreationExpression:
-	INTnum ArrayCreationExpressionB {$$ = MakeTree(ArrayTypeOp, $2, MakeLeaf(INTEGERT, $1));};
+	INTnum ArrayCreationExpressionB {$$ = MakeTree(ArrayTypeOp, $2, MakeLeaf(INTEGER T, $1));};
 ArrayCreationExpressionB:
 	LBRACnum Expression RBRACnum {$$ = MakeTree(BoundOp, MakeLeaf(DUMMYNode, 0), $2);} |
 	ArrayCreationExpressionB LBRACnum Expression RBRACnum {$$ = MakeTree(BoundOp, $1, $3);};
@@ -98,17 +103,29 @@ MethodDecl:
 
 	
 /* !!!!!!!!!!!FormalParameterList */
-FormalParameterList:
+/*FormalParameterList:
 	FormalParameterListB {$$ = MakeTree(SpecOp, $1, ReturnType);};
 FormalParameterListB:
-	VALnum INTnum IDnum {$$ = MakeTree(R/V Arg TypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $3), MakeLeaf(INTEGERT, $2)), MakeLeaf(DUMMYNode, 0));} |
-	VALnum INTnum IDnum FormalParameterListC {} |
-	INTnum IDnum {} |
+	VALnum INTnum IDnum {$$ = MakeTree(R/VArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $3), MakeLeaf(INTEGER T, $2)), MakeLeaf(DUMMYNode, 0));} |
+	VALnum INTnum IDnum FormalParameterListC {Temp = $2; $$ = MakeTree(R/VArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $3), MakeLeaf(INTEGER T, $2)), $4);} |
+	INTnum IDnum {$$ = MakeTree(R/VArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $2), MakeLeaf(INTEGER T, $1)), MakeLeaf(DUMMYNode, 0));} |
+	INTnum IDnum FormalParameterListC {Temp = $1; $$ = MakeTree(R/VArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $2), MakeLeaf(INTEGER T, $1)), $3);};
+FormalParameterListC:
+	COMMAnum IDnum {$$ = MakeTree(R/VArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $2), MakeLeaf(INTEGER T, Temp)), MakeLeaf(DUMMYNode, 0));} |
+	//How to make this tree
+	FormalParameterListC COMMAnum IDnum {} |
+	SEMInum FormalParameterListB {$$ = $2;};*/
+FormalParameterList:
+	FormalParameterListD {};
+FormalParameterListD:
+	VALnum FormalParameterListB {$$ = MakeTree();} |
+	FormalParameterListB {};
+FormalParameterListB:
 	INTnum IDnum FormalParameterListC {};
 FormalParameterListC:
-	COMMAnum IDnum {} |
-	FormalParameterListC COMMAnum IDnum {} |
-	SEMInum FormalParameterListB {};
+	COMMAnum IDnum FormalParameterListC {} |
+	epsilon {} |
+	SEMInum FormalParameterList {};
 
 /* Block */
 Block:
@@ -117,14 +134,15 @@ Block:
 
 /* !!!!!!!!!Type */
 Type:
-	TypeB TypeC {} |
-	TypeB {};
+	IDnum TypeB {$$ = MakeTree(TypeIdOp, $1, $2);} |
+	INTnum TypeB {$$ = MakeTree(TypeIdOp, $1, $2);};
 TypeB:
-	IDnum {} |
-	INTnum {};
+	LBRACnum RBRACnum {$$ = MakeTree(IndexOp, MakeNode(DUMMYNode, 0), MakeNode(DUMMYNode, 0));} |
+	TypeB LBRACnum RBRACnum {$$ = MakeTree(IndexOp, MakeLeaf(DUMMYNode, 0), $1); } |
+	LBRACnum RBRACnum TypeC {} |
+	TypeB LBRACnum RBRACnum TypeC {};
 TypeC:
-	LBRACnum RBRACnum {} |
-	TypeC LBRACnum RBRACnum {} |
+	DOTnum Type {$$ = MakeTree(FieldOp, $2, MakeNode(DUMMYNode, 0));};
 	
 
 // Second Half of Grammar //
