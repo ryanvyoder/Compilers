@@ -1,8 +1,9 @@
 %{
 #include <stdlib.h>
-#include "token.h"
+#include "y.tab.h"
 
-extern int yycolumn, yylength, yyline, yylval, sizeST, indexST;
+extern int yycolumn, yylength, yyline, sizeST, indexST;
+extern char* p;
 %}
 
 /* regular definitions */
@@ -149,8 +150,7 @@ int yyline = 0;
 int yycolumn = 0;
 int sizeST = 25;
 int indexST = 0;
-int yylval = 0;
-char* p; // reference variable to string table
+char* p; // reference variable to string
 
 
 /* :IGNORE ME:
@@ -395,4 +395,7 @@ int STadd(char* string, int length){
 char* getStringTable(){
 	return p;
 }
-
+int yywrap(void)
+{
+  return 1;
+}

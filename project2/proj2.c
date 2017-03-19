@@ -14,8 +14,9 @@ Aggelos Varvitsiotis.
 
 /*	define syntax tree node and pointer type	*/
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "proj2.h"
-#include "lex.yy.c"
 ILTree dummy = { DUMMYNode, 0, 0, 0, 0 };
  
 
@@ -332,9 +333,8 @@ void zerocrosses ()
     crosses [i] = 0;
 }
 
-extern char  p[];
-//extern char  strg_tbl[] = getStringTable();
 
+extern char * p; 
 char* getname(int i)/*return ID name or String, i is the index of the string table, passed through yylval*/
 {
 	char * name;
@@ -342,7 +342,7 @@ char* getname(int i)/*return ID name or String, i is the index of the string tab
 	char * end;
 	
 	start = p+i;
-	end = (strchr((p+i), ' ')) - 1;
+	end = (strchr((p+i), ' '));
 	
 	//the current word we're looking at is the length of the end of the string - the start position
 	name = calloc((end-start), sizeof(char));
@@ -351,7 +351,6 @@ char* getname(int i)/*return ID name or String, i is the index of the string tab
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
-	
 	return( name );/*return string table indexed at i*/
 }
 
@@ -376,7 +375,6 @@ char* getstring(int i)
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
-	
 	return( name );/*return string table indexed at i*/
 }
 
