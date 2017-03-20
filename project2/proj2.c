@@ -360,6 +360,7 @@ char* getstring(int i)
 	char * start;
 	char * end;
 	
+	start = p+i;
 	end = strchr((start+1), '\'');
 	// right here we are being sure to not stop constructing the comparison string if the string contains a single quote escape character
 	char * temp = end;
@@ -375,6 +376,7 @@ char* getstring(int i)
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
+	
 	return( name );/*return string table indexed at i*/
 }
 

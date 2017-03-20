@@ -3,5 +3,6 @@
 program xyz;
 class Test
 {
- 
+ declarations
+ enddeclarations
 }
