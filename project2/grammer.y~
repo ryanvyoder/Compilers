@@ -6,7 +6,7 @@ tree ReturnType = NULL;
 %}
 %start Program
 %token <intg> ANDnum ASSGNnum DECLARATIONSnum DOTnum ENDDECLARATIONSnum EQUALnum GTnum IDnum INTnum LBRACnum LPARENnum METHODnum NEnum ORnum PROGRAMnum RBRACnum RPARENnum SEMInum VALnum WHILEnum CLASSnum COMMAnum DIVIDEnum ELSEnum EQnum GEnum ICONSTnum IFnum LBRACEnum LEnum LTnum MINUSnum NOTnum PLUSnum RBRACEnum RETURNnum SCONSTnum TIMESnum VOIDnum ERRORnum STRERRORnum COMMERRORnum IDERRORnum BACKSLASHnum EOFnum			
-%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3  ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op3 Simple_op4 Simple_op5 Simple_op6 UnsignedConstant Term Term_op2 Term_op3 Term_op4 Term_op Term_op5 Term_op6 Term_op7 Term_op8  Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op FieldDeclD FieldDeclE ClassBodyC
+%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3  ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 UnsignedConstant Term_op Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op FieldDeclD FieldDeclE ClassBodyC
 Program ProgramB ClassDecl ClassBody ClassBodyB Decls DeclsB FieldDecl FieldDeclB VariableDeclId VariableDeclIdB VariableInitializer ArrayCreationExpression ArrayCreationExpressionB MethodDecl FormalParameterList FormalParameterListB FormalParameterListC FormalParameterListD Block Type TypeB TypeC ArrayInitializer ArrayInitializerB epsilon
 
 %% /* yacc specification */
@@ -190,22 +190,12 @@ Expression : SimpleExpression {$$ = $1;}
  { $$=MakeTree(LEOp,$1,$3); } | SimpleExpression GEnum SimpleExpression
  { $$=MakeTree(GEOp,$1,$3); };
 /*Simple Expression*/
-SimpleExpression : Simple_op6 {$$ = $1;}| PLUSnum Term Simple_op {$$= MakeTree(AddOp, $3,$2);} | MINUSnum Term Simple_op {$$= MakeTree(UnaryNegOp, $3,$2);};
-Simple_op : Simple_op3 {$$= $1;} | Simple_op4 {$$=$1;} | Simple_op5 {$$=$1;}| epsilon {$$ = MakeLeaf(DUMMYNode,0);};
-Simple_op3 :  PLUSnum Term Simple_op {$$ = MakeTree(AddOp, $3,$2); };
-Simple_op4 :  MINUSnum Term Simple_op {$$ = MakeTree(UnaryNegOp, $3,$2); };
-Simple_op5 :  ORnum Term Simple_op {$$ = MakeTree(OrOp, $3,$2); };
-Simple_op6 : Term PLUSnum Term Simple_op {$$ = MakeTree(AddOp, MakeTree(AddOp,$4,$3),$1); } | Term MINUSnum Term Simple_op {$$ = MakeTree(UnaryNegOp, MakeTree(UnaryNegOp,$4,$3),$1); }  | Term ORnum Term Simple_op {$$ = MakeTree(OrOp, MakeTree(OrOp,$4,$3),$1); }  | Term {$$ = $1;};
+SimpleExpression : Simple_op2;
+Simple_op : PLUSnum Term {$$=MakeTree(AddOp,$2,MakeLeaf(DUMMYNode,0));} | MINUSnum Term {$$=MakeTree(UnaryNegOp,$2,MakeLeaf(DUMMYNode,0));} | Term {$$=$1;} ;
+Simple_op2: Simple_op2 PLUSnum Term {$$= MakeTree(AddOp,$1,$3);} | Simple_op2 MINUSnum Term {$$= MakeTree(UnaryNegOp,$1,$3);}| Simple_op2 ORnum Term {$$= MakeTree(OrOp,$1,$3);} | Simple_op {$$=$1;};
 /*Term rules*/
 Term : Term_op {$$=$1;};
-Term_op: Term_op2 {$$= $1;} | Term_op3 {$$= $1;} | Term_op4 {$$= $1;} | Factor {$$= $1;};
-Term_op2: Factor TIMESnum Factor Term_op5 {$$ = MakeTree(MultOp, MakeTree(MultOp,$4,$3),$1); };
-Term_op3: Factor DIVIDEnum Factor Term_op5 {$$ = MakeTree(DivOp, MakeTree(DivOp,$4,$3),$1); };
-Term_op4: Factor ANDnum Factor Term_op5 {$$ = MakeTree(AndOp, MakeTree(AndOp,$4,$3),$1); };
-Term_op5 : Term_op6 {$$= $1;} | Term_op7 {$$= $1;} | Term_op8 {$$= $1;}| epsilon {$$= $1;};
-Term_op6: TIMESnum Factor Term_op5 {$$ = MakeTree(MultOp, $3,$2); };
-Term_op7: DIVIDEnum Factor Term_op5{$$ = MakeTree(DivOp, $3,$2); };
-Term_op8: ANDnum Factor Term_op5 {$$ = MakeTree(AndOp, $3,$2); };
+Term_op: Term_op  TIMESnum Factor {$$= MakeTree(MultOp,$1,$3);} | Term_op DIVIDEnum Factor {$$= $$= MakeTree(DivOp,$1,$3);} | Term_op ANDnum Factor {$$= MakeTree(AndOp,$1,$3);} | Factor {$$=$1;};
 /*Factor rules*/
 Factor : Factor_op {$$=$1;} | LPARENnum Expression RPARENnum {$$=$2;} | NOTnum Factor {$$ = MakeTree(NotOp, MakeLeaf(DUMMYNode,0),$2); } ;
 Factor_op: UnsignedConstant {$$=$1;} | Variable {$$=$1;} |MethodCallStatement {$$=$1;};
@@ -218,7 +208,6 @@ Variable_op2 : LBRACnum Variable_op3 RBRACnum Variable_op {$$=MakeTree(SelectOp,
 Variable_op3 : Expression {$$ = MakeTree(IndexOp, $1,MakeLeaf(DUMMYNode,0) );} | Expression COMMAnum Expression {$$ = MakeTree(IndexOp,$1 ,MakeTree(IndexOp, $3,MakeLeaf(DUMMYNode,0)));} ;
 epsilon : {};
 %%
-char* p;
 int yycolumn, yyline;
 FILE *treelst;
 main() { treelst = stdout; yyparse(); }

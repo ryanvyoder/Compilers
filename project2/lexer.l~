@@ -395,4 +395,7 @@ int STadd(char* string, int length){
 char* getStringTable(){
 	return p;
 }
-
+int yywrap(void)
+{
+  return 1;
+}
