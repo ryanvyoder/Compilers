@@ -18,11 +18,9 @@ Program ProgramB ClassDecl ClassBody ClassBodyB Decls DeclsB FieldDecl FieldDecl
  */
  
 
-/* GlobalType = Make:e
+/* GlobalType Does Work */
 
 /* Program */
-
-
 Program: 
 	PROGRAMnum IDnum SEMInum ProgramB {$$ = MakeTree(ProgramOp, $4, MakeLeaf(IDNode, $2)); printtree($$, 0);};
 ProgramB:
@@ -59,10 +57,11 @@ DeclsB:
 	
 /* Field Declarations */
 //Needs fixing (Should be left-recursive but isn't)
+//Segfault is definitely from GlobalType storage
 FieldDecl:
-	Type FieldDeclB {GlobalType = $1;$$ = $2; };
+	Type FieldDeclB {GlobalType = $1;$$ = GlobalType; };
 FieldDeclB:
-	VariableDeclId SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));} |
+	VariableDeclId SEMInum {$$ = GlobalType;/*MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));*/} |
 	VariableDeclId FieldDeclD SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, $2)));} |
 	VariableDeclId FieldDeclD FieldDeclE {$$ = MakeTree(DeclOp, $3, MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, $2)));};
 FieldDeclD:
@@ -127,11 +126,14 @@ FormalParameterListC:
 	COMMAnum IDnum FormalParameterListC {$$ = MakeTree(RArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $2), MakeLeaf(INTEGERTNode, 0)), $3);} |
 	SEMInum FormalParameterListB {$$ = $2;};
 
+
 /* Block */
 Block:
 	Decls StatementList {$$ = MakeTree(BodyOp, $1, $2);} |
 	StatementList {$$ = MakeTree(BodyOp, MakeLeaf(DUMMYNode, 0), $1);};
 
+	
+// Should be fine
 /* Type */
 Type:
 	IDnum TypeB {$$ = MakeTree(TypeIdOp, MakeLeaf(IDNode, $1), $2);} |
