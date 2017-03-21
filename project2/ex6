@@ -4,8 +4,7 @@ program xyz;
 class Test
 {
   declarations
-   int a, b, c=1; 
-   int[] d;
+   int x;
   enddeclarations
   method int main ()
   {

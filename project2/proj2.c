@@ -18,7 +18,6 @@ Aggelos Varvitsiotis.
 #include <string.h>
 #include "proj2.h"
 ILTree dummy = { DUMMYNode, 0, 0, 0, 0 };
- 
 
 /********************************************************
 *	This function return a DUMMYNode to the caller  *
@@ -446,7 +445,8 @@ void printtree (nd, depth)
 							getstring(IntVal(nd)));
 		    break;
 
-    case EXPRNode:  fprintf (treelst,"[%s]\n", 
+    case EXPRNode:  
+					fprintf (treelst,"[%s]\n", 
 					opnodenames [NodeOp(nd) - ProgramOp]);
 		    break;
 

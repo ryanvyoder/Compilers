@@ -22,7 +22,6 @@ class arrayOperations
       };
     return (sum);
   }
-
   method void readArray (val int n)
     declarations
   int i = 0;
