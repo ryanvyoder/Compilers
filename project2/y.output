@@ -88,8 +88,8 @@
   60                | LBRACEnum RBRACEnum
 
   61  Statementsop : Statement
-  62               | Statement SEMInum
-  63               | Statement SEMInum Statementsop
+  62               | Statementsop SEMInum
+  63               | Statementsop SEMInum Statement
 
   64  Statement : AssignmentStatement
   65            | Statements_Op
@@ -1969,18 +1969,18 @@ state 163
 
 state 164
 	StatementList : LBRACEnum Statementsop . RBRACEnum  (59)
+	Statementsop : Statementsop . SEMInum  (62)
+	Statementsop : Statementsop . SEMInum Statement  (63)
 
-	RBRACEnum  shift 189
+	SEMInum  shift 189
+	RBRACEnum  shift 190
 	.  error
 
 
 state 165
 	Statementsop : Statement .  (61)
-	Statementsop : Statement . SEMInum  (62)
-	Statementsop : Statement . SEMInum Statementsop  (63)
 
-	SEMInum  shift 190
-	RBRACEnum  reduce 61
+	.  reduce 61
 
 
 state 166
@@ -2227,19 +2227,14 @@ state 188
 
 
 state 189
-	StatementList : LBRACEnum Statementsop RBRACEnum .  (59)
-
-	.  reduce 59
-
-
-state 190
-	Statementsop : Statement SEMInum .  (62)
-	Statementsop : Statement SEMInum . Statementsop  (63)
+	Statementsop : Statementsop SEMInum .  (62)
+	Statementsop : Statementsop SEMInum . Statement  (63)
 
 	IDnum  shift 52
 	WHILEnum  shift 152
 	IFnum  shift 153
 	RETURNnum  shift 155
+	SEMInum  reduce 62
 	RBRACEnum  reduce 62
 
 	Variable  goto 156
@@ -2250,11 +2245,16 @@ state 190
 	Statements_Op4  goto 161
 	Statements_Op3  goto 162
 	ReturnStatement  goto 163
-	Statementsop  goto 201
-	Statement  goto 165
+	Statement  goto 201
 	Statements_Op  goto 166
 	Statements_Op2  goto 167
 	IFState_Op  goto 168
+
+
+state 190
+	StatementList : LBRACEnum Statementsop RBRACEnum .  (59)
+
+	.  reduce 59
 
 
 state 191
@@ -2323,7 +2323,7 @@ state 200
 
 
 state 201
-	Statementsop : Statement SEMInum Statementsop .  (63)
+	Statementsop : Statementsop SEMInum Statement .  (63)
 
 	.  reduce 63
 
