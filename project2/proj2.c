@@ -375,8 +375,9 @@ char* getstring(int i)
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
+	char * ret = name + 1;
 	
-	return( name );/*return string table indexed at i*/
+	return( ret );/*return string table indexed at i*/
 }
 
 
