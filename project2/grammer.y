@@ -44,6 +44,7 @@ ClassBodyC:
     ClassBodyC MethodDecl  { $$ = MakeTree(BodyOp, $1, $2);} |
     MethodDecl {$$ = MakeTree(BodyOp, MakeLeaf(DUMMYNode,0), $1);} | 
 	ClassBodyB {$$=$1;};
+
 	
 /* Declarations */
 Decls:
@@ -89,6 +90,7 @@ FieldDeclC:
 	EQUALnum VariableInitializer{$$ = $2;};
 //FieldDeclD:
 //	COMMAnum FieldDeclB {$$ = $2;};
+
 	
 	
 
@@ -145,14 +147,11 @@ FormalParameterListC:
 	COMMAnum IDnum FormalParameterListC {$$ = MakeTree(RArgTypeOp, MakeTree(CommaOp, MakeLeaf(IDNode, $2), MakeLeaf(INTEGERTNode, 0)), $3);} |
 	SEMInum FormalParameterList {$$ = $2;};
 
-
 /* Block */
 Block:
 	Decls StatementList {$$ = MakeTree(BodyOp, $1, $2);} |
 	StatementList {$$ = MakeTree(BodyOp, MakeLeaf(DUMMYNode, 0), $1);};
 
-	
-// Should be fine
 /* Type */
 Type:
 	IDnum TypeB {$$ = MakeTree(TypeIdOp, MakeLeaf(IDNode, $1), $2);} |
@@ -168,7 +167,7 @@ TypeB:
 
 /*Statement List rule*/
 StatementList: LBRACEnum Statementsop RBRACEnum {$$ = $2;} |  LBRACEnum RBRACEnum {$$ = MakeTree(StmtOp,MakeLeaf(DUMMYNode,0),MakeLeaf(DUMMYNode,0));} ;
-Statementsop: Statement {$$ =$1;}|Statement SEMInum {$$ =$1;}| Statement SEMInum Statementsop  {$$ = MakeTree(StmtOp,$1,$3);};
+Statementsop: Statement {$$ = MakeTree(StmtOp, MakeLeaf(DUMMYNode, 0),$1);}|Statementsop SEMInum {$$ = $1;}|Statementsop SEMInum Statement {$$ = MakeTree(StmtOp,$1, $3);};
 /*Statement*/
 Statement : AssignmentStatement {$$ = $1;} | Statements_Op {$$ = $1;};
 Statements_Op : MethodCallStatement {$$ = $1;} | Statements_Op2 {$$ = $1;};

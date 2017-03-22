@@ -88,8 +88,13 @@
   60                | LBRACEnum RBRACEnum
 
   61  Statementsop : Statement
+<<<<<<< HEAD
   62               | Statement SEMInum
   63               | Statement SEMInum Statementsop
+=======
+  62               | Statementsop SEMInum
+  63               | Statementsop SEMInum Statement
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
   64  Statement : AssignmentStatement
   65            | Statements_Op
@@ -1161,10 +1166,18 @@ state 95
 
 state 96
 	Simple_op : MINUSnum Term .  (94)
+<<<<<<< HEAD
+
+	.  reduce 94
+=======
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
 	.  reduce 94
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 state 97
 	Factor : NOTnum Factor .  (107)
 
@@ -1561,11 +1574,19 @@ state 121
 
 state 122
 	MethodDecl : METHODnum Type IDnum LPARENnum FormalParameterList RPARENnum . Block  (41)
+<<<<<<< HEAD
 
 	DECLARATIONSnum  shift 12
 	LBRACEnum  shift 115
 	.  error
 
+=======
+
+	DECLARATIONSnum  shift 12
+	LBRACEnum  shift 115
+	.  error
+
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 	StatementList  goto 116
 	Decls  goto 117
 	Block  goto 172
@@ -1824,11 +1845,19 @@ state 150
 
 	IDnum  shift 184
 	.  error
+<<<<<<< HEAD
 
 
 state 151
 	FormalParameterList : INTnum IDnum FormalParameterListC .  (45)
 
+=======
+
+
+state 151
+	FormalParameterList : INTnum IDnum FormalParameterListC .  (45)
+
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 	.  reduce 45
 
 
@@ -1969,18 +1998,31 @@ state 163
 
 state 164
 	StatementList : LBRACEnum Statementsop . RBRACEnum  (59)
+<<<<<<< HEAD
 
 	RBRACEnum  shift 189
+=======
+	Statementsop : Statementsop . SEMInum  (62)
+	Statementsop : Statementsop . SEMInum Statement  (63)
+
+	SEMInum  shift 189
+	RBRACEnum  shift 190
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 	.  error
 
 
 state 165
 	Statementsop : Statement .  (61)
+<<<<<<< HEAD
 	Statementsop : Statement . SEMInum  (62)
 	Statementsop : Statement . SEMInum Statementsop  (63)
 
 	SEMInum  shift 190
 	RBRACEnum  reduce 61
+=======
+
+	.  reduce 61
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
 
 state 166
@@ -2227,6 +2269,7 @@ state 188
 
 
 state 189
+<<<<<<< HEAD
 	StatementList : LBRACEnum Statementsop RBRACEnum .  (59)
 
 	.  reduce 59
@@ -2255,6 +2298,36 @@ state 190
 	Statements_Op  goto 166
 	Statements_Op2  goto 167
 	IFState_Op  goto 168
+=======
+	Statementsop : Statementsop SEMInum .  (62)
+	Statementsop : Statementsop SEMInum . Statement  (63)
+
+	IDnum  shift 52
+	WHILEnum  shift 152
+	IFnum  shift 153
+	RETURNnum  shift 155
+	SEMInum  reduce 62
+	RBRACEnum  reduce 62
+
+	Variable  goto 156
+	MethodCallStatement  goto 157
+	AssignmentStatement  goto 158
+	WhileStatement  goto 159
+	IfStatement  goto 160
+	Statements_Op4  goto 161
+	Statements_Op3  goto 162
+	ReturnStatement  goto 163
+	Statement  goto 201
+	Statements_Op  goto 166
+	Statements_Op2  goto 167
+	IFState_Op  goto 168
+
+
+state 190
+	StatementList : LBRACEnum Statementsop RBRACEnum .  (59)
+
+	.  reduce 59
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
 
 state 191
@@ -2323,7 +2396,11 @@ state 200
 
 
 state 201
+<<<<<<< HEAD
 	Statementsop : Statement SEMInum Statementsop .  (63)
+=======
+	Statementsop : Statementsop SEMInum Statement .  (63)
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
 	.  reduce 63
 

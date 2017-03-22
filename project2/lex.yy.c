@@ -570,7 +570,11 @@ char *yytext;
 extern int yycolumn, yylength, yyline, sizeST, indexST;
 extern char* p;
 /* regular definitions */
+<<<<<<< HEAD
 #line 574 "lex.yy.c"
+=======
+#line 583 "lex.yy.c"
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
 #define INITIAL 0
 
@@ -754,7 +758,11 @@ YY_DECL
     
 #line 64 "lexer.l"
 
+<<<<<<< HEAD
 #line 758 "lex.yy.c"
+=======
+#line 772 "lex.yy.c"
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 
 	if ( !(yy_init) )
 		{
@@ -1112,7 +1120,11 @@ YY_RULE_SETUP
 #line 144 "lexer.l"
 ECHO;
 	YY_BREAK
+<<<<<<< HEAD
 #line 1116 "lex.yy.c"
+=======
+#line 1130 "lex.yy.c"
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

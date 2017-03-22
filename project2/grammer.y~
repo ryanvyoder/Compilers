@@ -147,7 +147,11 @@ TypeB:
 
 /*Statement List rule*/
 StatementList: LBRACEnum Statementsop RBRACEnum {$$ = $2;} |  LBRACEnum RBRACEnum {$$ = MakeTree(StmtOp,MakeLeaf(DUMMYNode,0),MakeLeaf(DUMMYNode,0));} ;
+<<<<<<< HEAD
 Statementsop: Statement {$$ =$1;}|Statement SEMInum {$$ =$1;}| Statement SEMInum Statementsop  {$$ = MakeTree(StmtOp,$1,$3);};
+=======
+Statementsop: Statement {$$ = MakeTree(StmtOp, MakeLeaf(DUMMYNode, 0),$1);}|Statementsop SEMInum {$$ = MakeTree(StmtOp, MakeLeaf(DUMMYNode, 0),$1);}|Statementsop SEMInum Statement {$$ = MakeTree(StmtOp,$1, $3);};
+>>>>>>> ee65cb0696c5518c9759c20e51e4e91be85a4fbb
 /*Statement*/
 Statement : AssignmentStatement {$$ = $1;} | Statements_Op {$$ = $1;};
 Statements_Op : MethodCallStatement {$$ = $1;} | Statements_Op2 {$$ = $1;};
