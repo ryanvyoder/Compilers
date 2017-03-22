@@ -1,0 +1,13 @@
+/* EXAMPLE 1: A Hello World Program */
+
+program xyz;
+class Test
+{
+	declarations
+		int x = 236;
+	enddeclarations
+	method int main ()
+	{
+		
+	}
+}

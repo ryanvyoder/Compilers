@@ -20,7 +20,7 @@ method			(?i:method)
 integer			(?:"int")
 declaration		(?:declarations)
 endDecl			(?:enddeclarations)
-val			{declaration}{ws}*({integerConst}|{string})
+val			(?i:"val")
 assign			":="
 and			"&&"
 or			"||"
@@ -68,6 +68,7 @@ divide			"/"
 					yyline += comCount(yytext, yyleng);
 				}
 {commentERROR}	{yycolumn+=yyleng;return(COMMERRORnum);}
+{val}			{yycolumn+=yyleng; return(VALnum);}
 {ret}			{yycolumn+=yyleng; return(RETURNnum);}
 {class}			{yycolumn+=yyleng; return(CLASSnum);}
 {comma}			{yycolumn+=1; return(COMMAnum);}
@@ -110,7 +111,6 @@ divide			"/"
 {or}			{yycolumn+=2; return(ORnum);}
 {rsqua}			{yycolumn++; return(RBRACnum);}
 {rpar}			{yycolumn++; return(RPARENnum);}
-{val}			{yycolumn+=yyleng; return(VALnum);}
 {divide}		{yycolumn+=1; return(DIVIDEnum);}
 {equalto}		{yycolumn+=2; return(EQnum);}
 {greatoe}		{yycolumn+=2; return(GEnum);}

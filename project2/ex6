@@ -3,8 +3,11 @@
 program xyz;
 class Test
 {
+  declarations
+   int x;
+  enddeclarations
   method int main ()
   {
-    System.println ('Hello World !!!');
+    
   }
 }
