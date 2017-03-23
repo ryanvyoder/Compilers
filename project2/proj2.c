@@ -333,9 +333,17 @@ void zerocrosses ()
 }
 
 
+/* getname()
+ * This method takes an index within the string table and returns a pointer to that identifier within the string table.
+ *
+ * paramaters: 	i 	- the index within the string table (passed through yylval)
+ *
+ * return:		char *  - the pointer to the identifier from the string table
+*/
 extern char * p; 
-char* getname(int i)/*return ID name or String, i is the index of the string table, passed through yylval*/
+char* getname(int i)
 {
+	// name is a new char* that will hold only the identifier we are trying to return
 	char * name;
 	char * start;
 	char * end;
@@ -345,16 +353,24 @@ char* getname(int i)/*return ID name or String, i is the index of the string tab
 	
 	//the current word we're looking at is the length of the end of the string - the start position
 	name = calloc((end-start), sizeof(char));
-	//Moving the string from the string table into our currentSearch string
+	//Moving the string from the string table into our name string
 	int j;
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
-	return( name );/*return string table indexed at i*/
+	return( name );/*return identifier indexed at i*/
 }
 
+/* getstring()
+ * This method takes an index within the string table and returns a pointer to that string within the string table.
+ *
+ * paramaters: 	i 	- the index within the string table (passed through yylval)
+ *
+ * return:		char *  - the pointer to the string from the string table
+*/
 char* getstring(int i)
 {
+	// name is a new char* that will hold only the string we are trying to return
 	char * name;
 	char * start;
 	char * end;
@@ -370,14 +386,15 @@ char* getstring(int i)
 	
 	//the current word we're looking at is the length of the end of the string - the start position
 	name = calloc((end-start), sizeof(char));
-	//Moving the string from the string table into our currentSearch string
+	//Moving the string from the string table into our name string
 	int j;
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
+	// name + 1 because the string contains the starting quote; easy way out right here
 	char * ret = name + 1;
 	
-	return( ret );/*return string table indexed at i*/
+	return( ret );/*return string from string table indexed at i*/
 }
 
 
