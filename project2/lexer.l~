@@ -20,7 +20,7 @@ method			(?i:method)
 integer			(?:"int")
 declaration		(?:declarations)
 endDecl			(?:enddeclarations)
-val			{declaration}{ws}*({integerConst}|{string})
+val			(?i:"val")
 assign			":="
 and			"&&"
 or			"||"

@@ -18,7 +18,6 @@ Aggelos Varvitsiotis.
 #include <string.h>
 #include "proj2.h"
 ILTree dummy = { DUMMYNode, 0, 0, 0, 0 };
- 
 
 /********************************************************
 *	This function return a DUMMYNode to the caller  *
@@ -376,8 +375,9 @@ char* getstring(int i)
 	for(j = 0; j < (end - start); j++){
 		*(name+j) = *(p+i+j);
 	}
+	char * ret = name + 1;
 	
-	return( name );/*return string table indexed at i*/
+	return( ret );/*return string table indexed at i*/
 }
 
 
@@ -446,7 +446,8 @@ void printtree (nd, depth)
 							getstring(IntVal(nd)));
 		    break;
 
-    case EXPRNode:  fprintf (treelst,"[%s]\n", 
+    case EXPRNode:  
+					fprintf (treelst,"[%s]\n", 
 					opnodenames [NodeOp(nd) - ProgramOp]);
 		    break;
 
