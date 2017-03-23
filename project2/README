@@ -1,0 +1,14 @@
+Authors: Ryan Yoder & Vinayak Nesarikar
+
+make
+run ./parser< filename
+
+First 13 grammars written by Ryan
+
+Last 13 grammars written by Vinayak
+
+All of our parser's outputs should match the prof provided parser's outputs except for a couple differences:
+	String table indices do not match (Allowed by prof.)
+	Strings are all lower cased (Specified in project1)
+	Unarynegop instead of SubOp (Specified by prof.)
+2 shift/reduce conflicts (allowed by prof.) which does not cause an issue.
