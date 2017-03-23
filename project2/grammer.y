@@ -5,7 +5,7 @@
 %}
 %start Program
 %token <intg> ANDnum ASSGNnum DECLARATIONSnum DOTnum ENDDECLARATIONSnum EQUALnum GTnum IDnum INTnum LBRACnum LPARENnum METHODnum NEnum ORnum PROGRAMnum RBRACnum RPARENnum SEMInum VALnum WHILEnum CLASSnum COMMAnum DIVIDEnum ELSEnum EQnum GEnum ICONSTnum IFnum LBRACEnum LEnum LTnum MINUSnum NOTnum PLUSnum RBRACEnum RETURNnum SCONSTnum TIMESnum VOIDnum ERRORnum STRERRORnum COMMERRORnum IDERRORnum BACKSLASHnum EOFnum			
-%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3  ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 UnsignedConstant Term_op Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op ClassBodyC FieldDeclC
+%type <tptr> Variable Expre MethodCallStatement Expression AssignmentStatement SimpleExpression WhileStatement IfStatement Statements_Op4 Statements_Op3  ReturnStatement Statementsop Statement StatementList AssignmentStatement Statements_Op MethodCallStatement Statements_Op2 IFState_Op Term Simple_op Simple_op2 UnsignedConstant Term_op Factor Factor_op Variable Variable_op2 Variable_op3 Variable_op ClassBodyC FieldDeclC FieldDeclE
 Program ProgramB ClassDecl ClassBody ClassBodyB Decls DeclsB FieldDecl VariableDeclId VariableDeclIdB VariableInitializer ArrayCreationExpression ArrayCreationExpressionB MethodDecl FormalParameterList FormalParameterListC Block Type TypeB ArrayInitializer ArrayInitializerB epsilon
 FieldDeclD
 %% /* yacc specification */
@@ -76,10 +76,10 @@ FieldDeclE:
 	
 	//separate ending from recursive, make ending be top
 FieldDecl:
-	Type VariableDeclId SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $2, MakeTree(CommaOp, $1, MakeLeaf(DUMMYNode, 0))));} |
-	Type VariableDeclId FieldDeclD SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $2, MakeTree(CommaOp, $1, $3)));} |
-	Type FieldDeclC COMMAnum VariableDeclId SEMInum {GlobalType = $1; $$ = MakeTree(DeclOp, $2, MakeTree(CommaOp, $4, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));} |
-	Type FieldDeclC COMMAnum VariableDeclId FieldDeclD SEMInum {GlobalType = $1; $$ = MakeTree(DeclOp, $2, MakeTree(CommaOp, $4, MakeTree(CommaOp, GlobalType, $4)));} ;
+	FieldDeclE VariableDeclId SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $2, MakeTree(CommaOp, $1, MakeLeaf(DUMMYNode, 0))));} |
+	FieldDeclE VariableDeclId FieldDeclD SEMInum {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $2, MakeTree(CommaOp, $1, $3)));} |
+	FieldDeclE FieldDeclC COMMAnum VariableDeclId SEMInum {$$ = MakeTree(DeclOp, $2, MakeTree(CommaOp, $4, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));} |
+	FieldDeclE FieldDeclC COMMAnum VariableDeclId FieldDeclD SEMInum {$$ = MakeTree(DeclOp, $2, MakeTree(CommaOp, $4, MakeTree(CommaOp, GlobalType, $5)));} ;
 FieldDeclC:
 	VariableDeclId {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, MakeLeaf(DUMMYNode, 0))));} |
 	VariableDeclId FieldDeclD {$$ = MakeTree(DeclOp, MakeLeaf(DUMMYNode, 0), MakeTree(CommaOp, $1, MakeTree(CommaOp, GlobalType, $2)));} |
@@ -88,8 +88,8 @@ FieldDeclC:
 	
 FieldDeclD:
 	EQUALnum VariableInitializer{$$ = $2;};
-//FieldDeclE:
-//	FieldDeclC {$$ = $1;};
+FieldDeclE:
+	Type {GlobalType = $1; $$=$1;};
 	
 	//Needs fixed for example 4 at bottom (x = 8 and x = 9 are switched in tree structure)
 /*FieldDecl:
